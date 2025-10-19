@@ -61,27 +61,26 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    bat """
-                    kubectl set image deployment/devops-assignment-2-app ^
-                    devops-assignment-2-app=${DOCKER_IMAGE}:${DOCKER_TAG} ^
-                    --record
-                    """
-
-                    bat "kubectl rollout status deployment/devops-assignment-2-app --timeout=300s"
-
-                    bat """
-                    kubectl get pods -l app=devops-assignment-2-app
-                    kubectl get services -l app=devops-assignment-2-app
-                    """
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
+                        bat """
+                        set KUBECONFIG=%KUBECONFIG_FILE%
+                        kubectl set image deployment/devops-assignment-2-app ^
+                        devops-assignment-2-app=${DOCKER_IMAGE}:${DOCKER_TAG} ^
+                        --record
+        
+                        kubectl rollout status deployment/devops-assignment-2-app --timeout=300s
+        
+                        kubectl get pods -l app=devops-assignment-2-app
+                        kubectl get services -l app=devops-assignment-2-app
+                        """
+                    }
                 }
             }
         }
     }
-
     post {
         always {
             node('default') {
