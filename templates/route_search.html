@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Search - BusBooker Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header Navigation -->
+    <header class="bg-surface shadow-base border-b border-secondary-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <svg class="w-8 h-8 text-primary mr-3" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+                        <path d="M2 4v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2z" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <h1 class="text-xl font-bold text-text-primary">BusBooker Pro</h1>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="{{ url_for('route_search') }}" class="text-primary font-medium">Search Routes</a>
+                    <a href="{{ url_for('seat_selection') }}" class="text-text-secondary hover:text-primary transition-smooth">Select Seats</a>
+                    <a href="{{ url_for('payment_processing') }}" class="text-text-secondary hover:text-primary transition-smooth">Payment</a>
+                </nav>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-md text-text-secondary hover:text-primary hover:bg-secondary-50 transition-smooth">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Search Form Section -->
+        <section class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6 mb-8">
+            <div class="flex items-center mb-6">
+                <svg class="w-6 h-6 text-primary mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <h2 class="text-2xl font-bold text-text-primary">Search Bus Routes</h2>
+            </div>
+            
+            <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                <!-- Source City -->
+                <div class="space-y-2">
+                    <label for="source" class="block text-sm font-medium text-text-secondary">From</label>
+                    <div class="relative">
+                        <select id="source" class="form-input appearance-none pr-10">
+                            <option value="">Select Source City</option>
+                            <option value="hyderabad">Hyderabad</option>
+                            <option value="bangalore">Bangalore</option>
+                            <option value="chennai">Chennai</option>
+                            <option value="mumbai">Mumbai</option>
+                            <option value="delhi">Delhi</option>
+                            <option value="pune">Pune</option>
+                            <option value="kolkata">Kolkata</option>
+                        </select>
+                        <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-secondary-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Destination City -->
+                <div class="space-y-2">
+                    <label for="destination" class="block text-sm font-medium text-text-secondary">To</label>
+                    <div class="relative">
+                        <select id="destination" class="form-input appearance-none pr-10">
+                            <option value="">Select Destination City</option>
+                            <option value="hyderabad">Hyderabad</option>
+                            <option value="bangalore">Bangalore</option>
+                            <option value="chennai">Chennai</option>
+                            <option value="mumbai">Mumbai</option>
+                            <option value="delhi">Delhi</option>
+                            <option value="pune">Pune</option>
+                            <option value="kolkata">Kolkata</option>
+                        </select>
+                        <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-secondary-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Travel Date -->
+                <div class="space-y-2">
+                    <label for="travel-date" class="block text-sm font-medium text-text-secondary">Travel Date</label>
+                    <input type="date" id="travel-date" class="form-input" value="2025-10-19" min="2025-10-18">
+                </div>
+
+                <!-- Passenger Count -->
+                <div class="space-y-2">
+                    <label for="passengers" class="block text-sm font-medium text-text-secondary">Passengers</label>
+                    <div class="relative">
+                        <select id="passengers" class="form-input appearance-none pr-10">
+                            <option value="1">1 Passenger</option>
+                            <option value="2">2 Passengers</option>
+                            <option value="3">3 Passengers</option>
+                            <option value="4">4 Passengers</option>
+                            <option value="5">5 Passengers</option>
+                            <option value="6">6 Passengers</option>
+                        </select>
+                        <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-secondary-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Search Button -->
+                <button type="button" onclick="searchRoutes()" class="btn-primary h-12 flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <span>Search Buses</span>
+                </button>
+            </form>
+        </section>
+
+        <!-- Results Section -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Filters Sidebar -->
+            <aside class="lg:w-80 space-y-6">
+                <!-- Sort Options -->
+                <div class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                        <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
+                        </svg>
+                        Sort By
+                    </h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="radio" name="sort" value="price" class="text-primary focus:ring-primary-500" checked>
+                            <span class="ml-3 text-sm text-text-secondary">Price (Low to High)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="sort" value="duration" class="text-primary focus:ring-primary-500">
+                            <span class="ml-3 text-sm text-text-secondary">Duration (Shortest)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="sort" value="departure" class="text-primary focus:ring-primary-500">
+                            <span class="ml-3 text-sm text-text-secondary">Departure Time</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="sort" value="rating" class="text-primary focus:ring-primary-500">
+                            <span class="ml-3 text-sm text-text-secondary">Operator Rating</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Bus Type Filter -->
+                <div class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                        <svg class="w-5 h-5 text-primary mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+                        </svg>
+                        Bus Type
+                    </h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="text-primary focus:ring-primary-500" checked>
+                            <span class="ml-3 text-sm text-text-secondary">AC Sleeper</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="text-primary focus:ring-primary-500" checked>
+                            <span class="ml-3 text-sm text-text-secondary">Non-AC Sleeper</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="text-primary focus:ring-primary-500" checked>
+                            <span class="ml-3 text-sm text-text-secondary">AC Semi-Sleeper</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="text-primary focus:ring-primary-500" checked>
+                            <span class="ml-3 text-sm text-text-secondary">Seater</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Price Range Filter -->
+                <div class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                        <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                        </svg>
+                        Price Range
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <input type="number" placeholder="Min" class="form-input text-sm" value="500">
+                            <span class="text-text-secondary">-</span>
+                            <input type="number" placeholder="Max" class="form-input text-sm" value="2000">
+                        </div>
+                        <input type="range" min="500" max="2000" value="1250" class="w-full h-2 bg-secondary-200 rounded-lg appearance-none cursor-pointer slider">
+                    </div>
+                </div>
+
+                <!-- Departure Time Filter -->
+                <div class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                        <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Departure Time
+                    </h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="text-primary focus:ring-primary-500">
+                            <span class="ml-3 text-sm text-text-secondary">Early Morning (6AM - 12PM)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="text-primary focus:ring-primary-500">
+                            <span class="ml-3 text-sm text-text-secondary">Afternoon (12PM - 6PM)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="text-primary focus:ring-primary-500">
+                            <span class="ml-3 text-sm text-text-secondary">Evening (6PM - 12AM)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="text-primary focus:ring-primary-500">
+                            <span class="ml-3 text-sm text-text-secondary">Night (12AM - 6AM)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Reset Filters -->
+                <button class="w-full btn-secondary flex items-center justify-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span>Reset Filters</span>
+                </button>
+            </aside>
+
+            <!-- Route Results -->
+            <div class="flex-1">
+                <!-- Results Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="text-xl font-semibold text-text-primary">Available Routes</h2>
+                        <span class="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">{{ routes|length }} buses found</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-text-secondary">View:</span>
+                        <button class="p-2 rounded-md bg-primary text-white">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+                            </svg>
+                        </button>
+                        <button class="p-2 rounded-md text-secondary-600 hover:bg-secondary-100">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 4H4c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h6c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm10 0h-6c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h6c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-10 10H4c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h6c1.11 0 2-.89 2-2v-4c0-1.11-.89-2-2-2zm10 0h-6c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h6c1.11 0 2-.89 2-2v-4c0-1.11-.89-2-2-2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Route Cards -->
+                <div id="route-results" class="space-y-4">
+                    {% for route in routes %}
+                    <div class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6 hover:shadow-md transition-smooth">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <img src="{{ route.image }}" 
+                                     alt="{{ route.operator }} Bus" 
+                                     class="w-16 h-12 object-cover rounded-md"
+                                     onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-text-primary">{{ route.operator }}</h3>
+                                    <p class="text-sm text-text-secondary">{{ route.type }} • {{ route.seating }}</p>
+                                    <div class="flex items-center mt-1">
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 text-accent-500 fill-current" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                            <span class="text-sm text-text-secondary ml-1">{{ route.rating }} ({{ route.reviews }} reviews)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-text-primary">${{ "%.2f"|format(route.price) }}</div>
+                                {% if route.discount_price < route.price %}
+                                <div class="text-sm text-text-secondary line-through">${{ "%.2f"|format(route.discount_price) }}</div>
+                                {% else %}
+                                <div class="text-sm text-success-600">Best Price</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <div class="text-sm font-medium text-text-primary">Departure</div>
+                                    <div class="text-sm text-text-secondary">{{ route.departure }}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <div class="text-sm font-medium text-text-primary">Arrival</div>
+                                    <div class="text-sm text-text-secondary">{{ route.arrival }}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                <div>
+                                    <div class="text-sm font-medium text-text-primary">Duration</div>
+                                    <div class="text-sm text-text-secondary">{{ route.duration }}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                {% if route.available_seats > 10 %}
+                                <svg class="w-5 h-5 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                {% else %}
+                                <svg class="w-5 h-5 text-warning-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                                {% endif %}
+                                <div>
+                                    <div class="text-sm font-medium text-text-primary">Available</div>
+                                    <div class="text-sm {% if route.available_seats > 10 %}text-text-secondary{% else %}text-warning-600{% endif %}">
+                                        {{ route.available_seats }} seats
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                {% for amenity in route.amenities %}
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    <span class="text-sm text-text-secondary">{{ amenity }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <a href="{{ url_for('seat_selection', route_id=route.id) }}" class="btn-primary">Select Seats</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Load More Button -->
+                <div class="text-center mt-8">
+                    <button class="btn-secondary">
+                        Load More Routes
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-secondary-800 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg class="w-8 h-8 text-primary mr-3" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+                            <path d="M2 4v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2z" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <h3 class="text-xl font-bold">BusBooker Pro</h3>
+                    </div>
+                    <p class="text-secondary-300 text-sm">Your trusted partner for comfortable and affordable bus travel across the country.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-secondary-300">
+                        <li><a href="{{ url_for('route_search') }}" class="hover:text-white transition-smooth">Search Routes</a></li>
+                        <li><a href="{{ url_for('seat_selection') }}" class="hover:text-white transition-smooth">Book Tickets</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Track Bus</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Cancel Booking</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm text-secondary-300">
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Help Center</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Contact Us</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Terms & Conditions</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact Info</h4>
+                    <div class="space-y-2 text-sm text-secondary-300">
+                        <p>📞 1-800-BUS-BOOK</p>
+                        <p>✉️ support@busbookerpro.com</p>
+                        <p>🕒 24/7 Customer Support</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-secondary-700 mt-8 pt-8 text-center text-sm text-secondary-300">
+                <p>© 2025 BusBooker Pro. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Search functionality
+        function searchRoutes() {
+            const source = document.getElementById('source').value;
+            const destination = document.getElementById('destination').value;
+            const travelDate = document.getElementById('travel-date').value;
+            const passengers = document.getElementById('passengers').value;
+
+            if (!source || !destination) {
+                alert('Please select both source and destination cities.');
+                return;
+            }
+
+            if (source === destination) {
+                alert('Source and destination cannot be the same.');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('loading-state').classList.remove('hidden');
+            document.getElementById('route-results').classList.add('hidden');
+
+            // Simulate API call
+            setTimeout(() => {
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('route-results').classList.remove('hidden');
+                
+                // Update results header
+                const resultsCount = Math.floor(Math.random() * 20) + 5;
+                document.querySelector('.bg-primary-100').textContent = `${resultsCount} buses found`;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

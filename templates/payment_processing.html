@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Processing - BusBooker Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header Navigation -->
+    <header class="bg-surface shadow-base border-b border-secondary-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <svg class="w-8 h-8 text-primary mr-3" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+                        <path d="M2 4v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2z" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <h1 class="text-xl font-bold text-text-primary">BusBooker Pro</h1>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="{{ url_for('route_search') }}" class="text-text-secondary hover:text-primary transition-smooth">Search Routes</a>
+                    <a href="{{ url_for('seat_selection') }}" class="text-text-secondary hover:text-primary transition-smooth">Select Seats</a>
+                    <a href="{{ url_for('payment_processing') }}" class="text-primary font-medium">Payment</a>
+                </nav>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-md text-text-secondary hover:text-primary hover:bg-secondary-50 transition-smooth">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Progress Indicator -->
+    <div class="bg-surface border-b border-secondary-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-center space-x-8">
+                <!-- Step 1 -->
+                <div class="flex items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-success-600 text-white rounded-full text-sm font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <span class="ml-2 text-sm font-medium text-success-600">Search Routes</span>
+                </div>
+                
+                <!-- Connector -->
+                <div class="w-16 h-0.5 bg-success-600"></div>
+                
+                <!-- Step 2 -->
+                <div class="flex items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-success-600 text-white rounded-full text-sm font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <span class="ml-2 text-sm font-medium text-success-600">Select Seats</span>
+                </div>
+                
+                <!-- Connector -->
+                <div class="w-16 h-0.5 bg-primary"></div>
+                
+                <!-- Step 3 -->
+                <div class="flex items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full text-sm font-medium">3</div>
+                    <span class="ml-2 text-sm font-medium text-primary">Payment</span>
+                </div>
+                
+                <!-- Connector -->
+                <div class="w-16 h-0.5 bg-secondary-200"></div>
+                
+                <!-- Step 4 -->
+                <div class="flex items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-secondary-200 text-secondary-500 rounded-full text-sm font-medium">4</div>
+                    <span class="ml-2 text-sm font-medium text-secondary-500">Confirmation</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Booking Summary - Left Section -->
+            <div class="lg:w-2/5 space-y-6">
+                <!-- Mobile Collapsible Summary -->
+                <div class="lg:hidden">
+                    <button id="mobile-summary-toggle" class="w-full bg-surface rounded-lg shadow-base border border-secondary-200 p-4 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="font-semibold text-text-primary">Booking Summary</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-lg font-bold text-primary mr-2">$45.00</span>
+                            <svg id="summary-chevron" class="w-5 h-5 text-secondary-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Booking Summary Content -->
+                <div id="booking-summary" class="hidden lg:block space-y-6">
+                    <!-- Route Details -->
+                    <div class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                            <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 8V9m0 0L9 7"/>
+                            </svg>
+                            Route Details
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-medium text-text-primary">TGSRTC Express</div>
+                                    <div class="text-sm text-text-secondary">AC Sleeper • 2+1 Seating</div>
+                                </div>
+                                <img src="https://images.unsplash.com/photo-1606135673631-1ff4dda17834" 
+                                     alt="TGSRTC Express Bus" 
+                                     class="w-16 h-12 object-cover rounded-md"
+                                     onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;">
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-secondary-200">
+                                <div>
+                                    <div class="text-sm text-text-secondary">From</div>
+                                    <div class="font-medium text-text-primary">Hyderabad</div>
+                                    <div class="text-sm text-text-secondary">08:30 AM</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-text-secondary">To</div>
+                                    <div class="font-medium text-text-primary">Bangalore</div>
+                                    <div class="text-sm text-text-secondary">02:15 PM</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between pt-2">
+                                <div class="text-sm text-text-secondary">Travel Date</div>
+                                <div class="font-medium text-text-primary">October 19, 2025</div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm text-text-secondary">Duration</div>
+                                <div class="font-medium text-text-primary">5h 45m</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Seats -->
+                    <div class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                            <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Selected Seats
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-primary-50 rounded-md border border-primary-200">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-primary text-white rounded flex items-center justify-center text-sm font-medium mr-3">A1</div>
+                                    <div>
+                                        <div class="font-medium text-text-primary">John Smith</div>
+                                        <div class="text-sm text-text-secondary">Lower Berth</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-text-primary">$45.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fare Breakdown -->
+                    <div class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                            <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            Fare Breakdown
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-text-secondary">Base Fare (1 seat)</span>
+                                <span class="text-text-primary">$40.00</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-text-secondary">Service Tax</span>
+                                <span class="text-text-primary">$3.60</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-text-secondary">Booking Fee</span>
+                                <span class="text-text-primary">$1.40</span>
+                            </div>
+                            <div class="border-t border-secondary-200 pt-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-semibold text-text-primary">Total Amount</span>
+                                    <span class="text-xl font-bold text-primary">$45.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Section - Right Section -->
+            <div class="lg:w-3/5">
+                <div class="bg-surface rounded-lg shadow-base border border-secondary-200 p-6">
+                    <div class="flex items-center mb-6">
+                        <svg class="w-6 h-6 text-primary mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                        <h2 class="text-2xl font-bold text-text-primary">Payment Details</h2>
+                    </div>
+
+                    <!-- Security Badges -->
+                    <div class="flex items-center justify-center space-x-6 mb-8 p-4 bg-success-50 rounded-lg border border-success-200">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-success-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                            </svg>
+                            <span class="text-sm font-medium text-success-700">SSL Secured</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-success-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <span class="text-sm font-medium text-success-700">256-bit Encryption</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-success-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-sm font-medium text-success-700">PCI Compliant</span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method Selection -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Select Payment Method</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Credit/Debit Card -->
+                            <label class="relative">
+                                <input type="radio" name="payment-method" value="card" class="sr-only peer" checked>
+                                <div class="p-4 border-2 border-secondary-200 rounded-lg cursor-pointer transition-all peer-checked:border-primary peer-checked:bg-primary-50 hover:border-primary-300">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="font-medium text-text-primary">Credit/Debit Card</div>
+                                        <div class="text-sm text-text-secondary">Visa, MasterCard, Amex</div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- Digital Wallet -->
+                            <label class="relative">
+                                <input type="radio" name="payment-method" value="wallet" class="sr-only peer">
+                                <div class="p-4 border-2 border-secondary-200 rounded-lg cursor-pointer transition-all peer-checked:border-primary peer-checked:bg-primary-50 hover:border-primary-300">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="font-medium text-text-primary">Digital Wallet</div>
+                                        <div class="text-sm text-text-secondary">PayPal, Apple Pay, Google Pay</div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- Net Banking -->
+                            <label class="relative">
+                                <input type="radio" name="payment-method" value="netbanking" class="sr-only peer">
+                                <div class="p-4 border-2 border-secondary-200 rounded-lg cursor-pointer transition-all peer-checked:border-primary peer-checked:bg-primary-50 hover:border-primary-300">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                        </svg>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="font-medium text-text-primary">Net Banking</div>
+                                        <div class="text-sm text-text-secondary">All Major Banks</div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Card Payment Form -->
+                    <div id="card-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Card Number -->
+                            <div class="md:col-span-2">
+                                <label for="card-number" class="block text-sm font-medium text-text-secondary mb-2">Card Number</label>
+                                <div class="relative">
+                                    <input type="text" id="card-number" placeholder="1234 5678 9012 3456" 
+                                           class="form-input pr-12" maxlength="19">
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                        <svg class="w-6 h-6 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cardholder Name -->
+                            <div class="md:col-span-2">
+                                <label for="cardholder-name" class="block text-sm font-medium text-text-secondary mb-2">Cardholder Name</label>
+                                <input type="text" id="cardholder-name" placeholder="John Smith" class="form-input">
+                            </div>
+
+                            <!-- Expiry Date -->
+                            <div>
+                                <label for="expiry-date" class="block text-sm font-medium text-text-secondary mb-2">Expiry Date</label>
+                                <input type="text" id="expiry-date" placeholder="MM/YY" class="form-input" maxlength="5">
+                            </div>
+
+                            <!-- CVV -->
+                            <div>
+                                <label for="cvv" class="block text-sm font-medium text-text-secondary mb-2">CVV</label>
+                                <div class="relative">
+                                    <input type="text" id="cvv" placeholder="123" class="form-input pr-10" maxlength="4">
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                        <svg class="w-4 h-4 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Billing Address -->
+                        <div class="border-t border-secondary-200 pt-6">
+                            <h4 class="text-lg font-semibold text-text-primary mb-4">Billing Address</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <label for="address" class="block text-sm font-medium text-text-secondary mb-2">Street Address</label>
+                                    <input type="text" id="address" placeholder="123 Main Street" class="form-input">
+                                </div>
+                                <div>
+                                    <label for="city" class="block text-sm font-medium text-text-secondary mb-2">City</label>
+                                    <input type="text" id="city" placeholder="New York" class="form-input">
+                                </div>
+                                <div>
+                                    <label for="zip" class="block text-sm font-medium text-text-secondary mb-2">ZIP Code</label>
+                                    <input type="text" id="zip" placeholder="10001" class="form-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Digital Wallet Form (Hidden by default) -->
+                    <div id="wallet-form" class="hidden space-y-6">
+                        <div class="text-center py-8">
+                            <div class="flex justify-center space-x-6 mb-6">
+                                <img src="https://images.unsplash.com/photo-1706879349461-1fdfb4f7d519" 
+                                     alt="PayPal logo" 
+                                     class="h-12 object-contain"
+                                     onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;">
+                                <img src="https://images.unsplash.com/photo-1649734924649-b559375080b0" 
+                                     alt="Apple Pay logo" 
+                                     class="h-12 object-contain"
+                                     onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;">
+                                <img src="https://images.unsplash.com/photo-1730818874925-85a171547e46" 
+                                     alt="Google Pay logo" 
+                                     class="h-12 object-contain"
+                                     onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;">
+                            </div>
+                            <p class="text-text-secondary">You will be redirected to your selected wallet provider to complete the payment.</p>
+                        </div>
+                    </div>
+
+                    <!-- Net Banking Form (Hidden by default) -->
+                    <div id="netbanking-form" class="hidden space-y-6">
+                        <div>
+                            <label for="bank-select" class="block text-sm font-medium text-text-secondary mb-2">Select Your Bank</label>
+                            <div class="relative">
+                                <select id="bank-select" class="form-input appearance-none pr-10">
+                                    <option value="">Choose your bank</option>
+                                    <option value="sbi">State Bank of India</option>
+                                    <option value="hdfc">HDFC Bank</option>
+                                    <option value="icici">ICICI Bank</option>
+                                    <option value="axis">Axis Bank</option>
+                                    <option value="kotak">Kotak Mahindra Bank</option>
+                                    <option value="pnb">Punjab National Bank</option>
+                                </select>
+                                <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-secondary-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="border-t border-secondary-200 pt-6 mt-8">
+                        <label class="flex items-start">
+                            <input type="checkbox" id="terms-checkbox" class="mt-1 text-primary focus:ring-primary-500">
+                            <span class="ml-3 text-sm text-text-secondary">
+                                I agree to the 
+                                <button type="button" id="terms-link" class="text-primary hover:underline">Terms and Conditions</button> 
+                                and 
+                                <button type="button" id="privacy-link" class="text-primary hover:underline">Privacy Policy</button>
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Payment Button -->
+                    <div class="mt-8">
+                        <button id="payment-button" class="w-full btn-primary text-lg py-4 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <span id="payment-button-text">Complete Payment - $45.00</span>
+                            <svg id="payment-loading" class="hidden animate-spin ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Terms Modal -->
+    <div id="terms-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-surface rounded-lg shadow-xl max-w-2xl w-full max-h-96 overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-text-primary">Terms and Conditions</h3>
+                    <button id="close-terms" class="text-secondary-400 hover:text-secondary-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="text-sm text-text-secondary space-y-4">
+                    <p>By using BusBooker Pro services, you agree to the following terms:</p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>Tickets are non-transferable and must be presented during travel</li>
+                        <li>Cancellation charges apply as per the operator's policy</li>
+                        <li>Passengers must carry valid ID proof during travel</li>
+                        <li>BusBooker Pro is not liable for delays or cancellations by operators</li>
+                        <li>Refunds will be processed within 7-10 business days</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-secondary-800 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg class="w-8 h-8 text-primary mr-3" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+                            <path d="M2 4v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2z" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <h3 class="text-xl font-bold">BusBooker Pro</h3>
+                    </div>
+                    <p class="text-secondary-300 text-sm">Your trusted partner for comfortable and affordable bus travel across the country.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-secondary-300">
+                        <li><a href="{{ url_for('route_search') }}" class="hover:text-white transition-smooth">Search Routes</a></li>
+                        <li><a href="{{ url_for('seat_selection') }}" class="hover:text-white transition-smooth">Book Tickets</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Track Bus</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Cancel Booking</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm text-secondary-300">
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Help Center</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Contact Us</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Terms & Conditions</a></li>
+                        <li><a href="javascript:void(0)" class="hover:text-white transition-smooth">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact Info</h4>
+                    <div class="space-y-2 text-sm text-secondary-300">
+                        <p>📞 1-800-BUS-BOOK</p>
+                        <p>✉️ support@busbookerpro.com</p>
+                        <p>🕒 24/7 Customer Support</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-secondary-700 mt-8 pt-8 text-center text-sm text-secondary-300">
+                <p>© 2025 BusBooker Pro. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script>
+    // Mobile summary toggle
+    document.getElementById('mobile-summary-toggle').addEventListener('click', function() {
+        const summary = document.getElementById('booking-summary');
+        const chevron = document.getElementById('summary-chevron');
+        
+        summary.classList.toggle('hidden');
+        chevron.classList.toggle('rotate-180');
+    });
+
+    // Payment method selection
+    document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Hide all forms
+            document.getElementById('card-form').classList.add('hidden');
+            document.getElementById('wallet-form').classList.add('hidden');
+            document.getElementById('netbanking-form').classList.add('hidden');
+            
+            // Show selected form
+            if (this.value === 'card') {
+                document.getElementById('card-form').classList.remove('hidden');
+            } else if (this.value === 'wallet') {
+                document.getElementById('wallet-form').classList.remove('hidden');
+            } else if (this.value === 'netbanking') {
+                document.getElementById('netbanking-form').classList.remove('hidden');
+            }
+        });
+    });
+
+    // Card number formatting
+    document.getElementById('card-number').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+        e.target.value = formattedValue;
+    });
+
+    // Expiry date formatting
+    document.getElementById('expiry-date').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        e.target.value = value;
+    });
+
+    // CVV validation
+    document.getElementById('cvv').addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+
+    // Terms checkbox validation
+    document.getElementById('terms-checkbox').addEventListener('change', function() {
+        const paymentButton = document.getElementById('payment-button');
+        paymentButton.disabled = !this.checked;
+    });
+
+    // Terms modal
+    document.getElementById('terms-link').addEventListener('click', function() {
+        document.getElementById('terms-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('privacy-link').addEventListener('click', function() {
+        document.getElementById('terms-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('close-terms').addEventListener('click', function() {
+        document.getElementById('terms-modal').classList.add('hidden');
+    });
+
+    // Close modal on backdrop click
+    document.getElementById('terms-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+        }
+    });
+
+    // Payment processing - UPDATED TO REDIRECT TO ROUTE SEARCH
+    document.getElementById('payment-button').addEventListener('click', function() {
+        const button = this;
+        const buttonText = document.getElementById('payment-button-text');
+        const loadingIcon = document.getElementById('payment-loading');
+        
+        // Disable button and show loading
+        button.disabled = true;
+        buttonText.textContent = 'Processing Payment...';
+        loadingIcon.classList.remove('hidden');
+        
+        // Simulate payment processing
+        setTimeout(() => {
+            // Show success message
+            alert('Payment successful! Your booking has been confirmed. Redirecting to route search...');
+            
+            // Reset button state
+            button.disabled = false;
+            buttonText.textContent = 'Complete Payment - $45.00';
+            loadingIcon.classList.add('hidden');
+            
+            // REDIRECT TO ROUTE SEARCH PAGE INSTEAD OF CONFIRMATION
+            window.location.href = "{{ url_for('route_search') }}";
+        }, 3000);
+    });
+
+    // Form validation
+    function validateForm() {
+        const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+        let isValid = true;
+        
+        if (paymentMethod === 'card') {
+            const cardNumber = document.getElementById('card-number').value;
+            const cardholderName = document.getElementById('cardholder-name').value;
+            const expiryDate = document.getElementById('expiry-date').value;
+            const cvv = document.getElementById('cvv').value;
+            
+            isValid = cardNumber.length >= 19 && cardholderName.length > 0 && 
+                     expiryDate.length === 5 && cvv.length >= 3;
+        } else if (paymentMethod === 'netbanking') {
+            const bankSelect = document.getElementById('bank-select').value;
+            isValid = bankSelect !== '';
+        }
+        
+        return isValid;
+    }
+
+    // Real-time form validation
+    document.addEventListener('input', function() {
+        const termsChecked = document.getElementById('terms-checkbox').checked;
+        const formValid = validateForm();
+        const paymentButton = document.getElementById('payment-button');
+        
+        paymentButton.disabled = !(termsChecked && formValid);
+    });
+</script>
+</body>
+</html>
