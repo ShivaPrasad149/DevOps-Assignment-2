@@ -441,100 +441,11 @@ kubectl create secret docker-registry regcred \
 - Install kubectl on Jenkins agent
 - Update Jenkinsfile with correct kubectl path
 
-## 📁 Important Configuration Files
-
-### .gitignore
-```gitignore
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Docker
-docker-compose.override.yml
-
-# Logs
-*.log
-logs/
-
-# Environment variables
-.env
-.env.local
-.env.production
-
-# Temporary files
-tmp/
-temp/
-
-# Coverage reports
-htmlcov/
-.coverage
-.coverage.*
-.coverage
-```
-
-### .dockerignore
-```dockerignore
-**/.git
-**/.gitignore
-**/.dockerignore
-**/Dockerfile
-**/Jenkinsfile
-**/README.md
-**/.vscode
-**/.idea
-**/*.log
-**/env
-**/venv
-**/ENV
-**/__pycache__
-**/*.pyc
-**/*.pyo
-**/*.pyd
-**/.Python
-**/pip-log.txt
-**/pip-delete-this-directory.txt
-**/htmlcov
-**/.coverage
-**/.cache
-**/nosetests.xml
-**/coverage.xml
-**/*.cover
-**/.hypothesis
-**/.pytest_cache
-**/tmp
-**/temp
-**/.env
-**/.env.local
-```
-
 ## 👤 Author
 
 **Shiva Prasad**
 
-- GitHub: [https://github.com/Yuvakunaal](https://github.com/Yuvakunaal)
+- GitHub: [https://github.com/ShivaPrasad149](https://github.com/ShivaPrasad149)
 - Docker Hub: [https://hub.docker.com/u/shivaprasad149](https://hub.docker.com/u/shivaprasad149)
 
 ## 🙏 Acknowledgments
@@ -545,19 +456,5 @@ htmlcov/
 - Jenkins for CI/CD automation
 
 > **⭐ If you find this project helpful, please give it a star!**
-
----
-
-## 📞 Support
-
-For support or questions regarding this DevOps setup:
-- Create an issue on GitHub
-- Contact: shivaprasad149 (Docker Hub)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
 
 **Happy DevOps Journey! 🚀**
