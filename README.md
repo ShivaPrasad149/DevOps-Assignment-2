@@ -113,7 +113,7 @@ DevOps-Assignment-2/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Yuvakunaal/DevOps-Assignment-2.git
+git clone https://github.com/ShivaPrasad149/DevOps-Assignment-2.git
 cd DevOps-Assignment-2
 ```
 
