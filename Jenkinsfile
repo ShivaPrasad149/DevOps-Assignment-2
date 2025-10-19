@@ -33,7 +33,8 @@ pipeline {
                 script {
                     // Run container for testing
                     bat "docker run -d --name test-app -p 8001:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                    // Sleep 10 seconds (Windows equivalent)
+
+                    // Wait 10 seconds for the app to start
                     bat 'ping 127.0.0.1 -n 10 >nul'
 
                     // Health check using PowerShell curl
@@ -84,30 +85,24 @@ pipeline {
 
     post {
         always {
-            node {
-                bat 'docker system prune -f'
-                bat 'echo Pipeline execution completed'
-            }
+            bat 'docker system prune -f'
+            bat 'echo Pipeline execution completed'
         }
         success {
-            node {
-                bat 'echo Pipeline executed successfully!'
-                emailext (
-                    subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                    body: "The Jenkins build ${env.BUILD_URL} completed successfully.",
-                    to: "ShivaPrasad149@example.com"
-                )
-            }
+            bat 'echo Pipeline executed successfully!'
+            emailext (
+                subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: "The Jenkins build ${env.BUILD_URL} completed successfully.",
+                to: "ShivaPrasad149@example.com"
+            )
         }
         failure {
-            node {
-                bat 'echo Pipeline execution failed!'
-                emailext (
-                    subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                    body: "The Jenkins build ${env.BUILD_URL} failed. Please check the console output.",
-                    to: "ShivaPrasad149@example.com"
-                )
-            }
+            bat 'echo Pipeline execution failed!'
+            emailext (
+                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: "The Jenkins build ${env.BUILD_URL} failed. Please check the console output.",
+                to: "ShivaPrasad149@example.com"
+            )
         }
     }
 }
