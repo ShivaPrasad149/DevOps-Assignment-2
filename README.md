@@ -256,13 +256,18 @@ The Jenkins pipeline automates the entire deployment process with the following 
    - Kubernetes CLI
    - Git
 
-2. **Configure Docker Hub Credentials**:
-
-   - Go to Jenkins → Manage Jenkins → Manage Credentials
-   - Add credentials with ID: `docker-hub-cred`
-   - Username: `shivaprasad149`
-   - Password: Your Docker Hub password/token
-
+2.  **Configure Jenkins Credentials**:
+    -   Go to Jenkins → Manage Jenkins → Manage Credentials
+    -   Add **Docker Hub Credentials**:
+        -   **Kind**: Username with Password
+        -   **ID**: `docker-hub-cred`
+        -   **Username**: `shivaprasad149`
+        -   **Password**: Your Docker Hub password/token
+    -   Add **Kubernetes config**:
+        -   **Kind**: Secret file
+        -   **ID**: `kubeconfig`
+        -   **File**: Upload your `~/.kube/config` file
+        
 3. **Create Pipeline Job**:
 
    - New Item → Pipeline
